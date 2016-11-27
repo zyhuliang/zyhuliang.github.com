@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            background-image: url(../img/29.jpg);
+            background-size: 100%;
+        }
+        *{
+            margin: 0;
+            padding:0;
+            list-style: none;
+        }
+        a{
+            display: block;
+            width: 50px;
+            height: 30px;
+            background:#1cc7ff;
+            border:1px solid #fff;
+            text-decoration: none;
+            line-height: 30px;
+            text-align: center;
+        }
+        .wall-img{ width:960px; height: 600px;  position:absolute;left: 300px;}
+        .wall-img li{ width:160px; height:200px; float:left;}
+        .wall-img li img{ width:100%; height:100%;}
+    </style>
+    <script src="../js/doMove.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded',function(){
+            (function(){
+                var oDiv = document.querySelector('.wall-img');
+                var aLi = oDiv.children;
+                /*var oBtn=document.querySelector('input');*/
+                var aPos = [];
+
+
+                /*oBtn.onclick=function(){
+                 aPos.sort(function(){
+                 return 0.5-Math.random();
+                 });
+                 console.log(aPos);
+
+                 for(var i=0; i<aLi.length;i++){
+                 aLi[i].index=i;
+                 move(aLi[i],{top:aPos[i].top,left:aPos[i].left},{type:Tween.Bounce.easeIn})
+                 }
+
+                 }*/
+
+
+                //[{left:100,top:100},{left:100,top:100}]
+                //布局转换
+                for (var i = 0; i < aLi.length; i++) {
+                    aPos.push({left: aLi[i].offsetLeft, top: aLi[i].offsetTop});
+                }
+                console.log('第一次', aPos);
+
+                for (var i = 0; i < aPos.length; i++) {
+                    aLi[i].style.left = aPos[i].left + 'px';
+                    aLi[i].style.top = aPos[i].top + 'px';
+                    aLi[i].style.position = 'absolute';
+                    aLi[i].style.margin = 0;
+                }
+
+                for (var i = 0; i < aLi.length; i++) {
+                    aLi[i].index = i;
+                    aLi[i].onmousedown = function (ev) {
+                        var disX = ev.clientX - this.offsetLeft;
+                        var disY = ev.clientY - this.offsetTop;
+                        var _this = this;
+                        for (var i = 0; i < aLi.length; i++) {
+                            aLi[i].style.zIndex = 0;
+                        }
+                        _this.style.zIndex++;
+                        document.onmousemove = function (ev) {
+                            var x = ev.clientX - disX;
+                            var y = ev.clientY - disY;
+                            _this.style.left = x + 'px';
+                            _this.style.top = y + 'px';
+                            for (var i = 0; i < aLi.length; i++) {
+                                aLi[i].style.border = '';
+                            }
+                            //返回出来个最近的对象
+                            var oNear = findNearest(_this);
+                            if (oNear) {
+                                oNear.style.border = '1px solid red';
+                            }
+
+                        }
+                        document.onmouseup = function () {
+                            document.onmousemove = null;
+                            document.onmouseup = null;
+
+                            var oNear = findNearest(_this);
+                            var objL = aPos[_this.index].left;
+                            var objT = aPos[_this.index].top;
+                            if (oNear) {
+                                oNear.style.border = '';
+                                var oNearL = aPos[oNear.index].left;
+                                var oNearT = aPos[oNear.index].top;
+                                move(_this, {left: oNearL, top: oNearT});
+                                move(oNear, {left: objL, top: objT});
+                                var temp = _this.index;
+                                _this.index = oNear.index;
+                                oNear.index = temp;
+                            } else {
+                                //没撞到
+                                move(_this, {top: objT, left: objL});
+                            }
+                        }
+                        return false;
+                    };
+                }
+
+                function findNearest(obj) {
+
+                    var minVal = new Date().getTime();
+                    var minIndex = -1;
+
+                    for (var i = 0; i < aLi.length; i++) {
+                        if (obj == aLi[i]) {
+                            continue
+                        }
+                        if (colltest(obj, aLi[i])) {
+
+                            var val = getDis(obj, aLi[i]);
+
+                            if (val < minVal) {
+                                minVal = val;
+                                minIndex = i;
+                            }
+
+                        }
+                    }
+
+                    if (minIndex < 0) {
+                        return null;
+                    } else {
+                        return aLi[minIndex];
+                    }
+                }
+
+
+                function colltest(obj1, obj2) {
+                    var l1 = obj1.offsetLeft;
+                    var r1 = l1 + obj1.offsetWidth;
+                    var t1 = obj1.offsetTop;
+                    var b1 = t1 + obj1.offsetHeight;
+
+                    var l2 = obj2.offsetLeft;
+                    var r2 = l2 + obj2.offsetWidth;
+                    var t2 = obj2.offsetTop;
+                    var b2 = t2 + obj2.offsetHeight;
+
+                    if (r1 > l2 && b1 > t2 && l1 < r2 && t1 < b2) {
+                        //撞上了
+                        return true;
+                    } else {
+                        //没撞上
+                        return false;
+                    }
+
+                }
+
+                function getDis(obj1, obj2) {
+                    var b = obj1.offsetLeft - obj2.offsetLeft;
+                    var a = obj2.offsetTop - obj1.offsetTop;
+
+                    var c = Math.sqrt(a * a + b * b);
+                    return c;
+                }
+            })();
+        },false)
+
+
+    </script>
+</head>
+<body>
+<a href="../index.html">返回</a>
+<ul class="wall-img clearfix">
+    <li><img src="../image/2_01.gif" /></li>
+    <li><img src="../image/2_02.gif" /></li>
+    <li><img src="../image/2_03.gif" /></li>
+    <li><img src="../image/2_04.gif" /></li>
+    <li><img src="../image/2_05.gif" /></li>
+    <li><img src="../image/2_06.gif" /></li>
+    <li><img src="../image/2_07.gif" /></li>
+    <li><img src="../image/2_08.gif" /></li>
+    <li><img src="../image/2_09.gif" /></li>
+    <li><img src="../image/2_10.gif" /></li>
+    <li><img src="../image/2_11.gif" /></li>
+    <li><img src="../image/2_12.gif" /></li>
+    <li><img src="../image/2_13.gif" /></li>
+    <li><img src="../image/2_14.gif" /></li>
+    <li><img src="../image/2_15.gif" /></li>
+    <li><img src="../image/2_16.gif" /></li>
+    <li><img src="../image/2_17.gif" /></li>
+    <li><img src="../image/2_18.gif" /></li>
+</ul>
+</body>
+</html>

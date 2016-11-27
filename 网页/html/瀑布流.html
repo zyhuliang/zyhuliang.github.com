@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>智能社--http://www.zhinengshe.com</title>
+    <style>
+        *{
+            margin:0;
+            padding: 0;
+        }
+        a{
+            display: block;
+            width: 50px;
+            height: 30px;
+            background:#1cc7ff;
+            border:1px solid #fff;
+            text-decoration: none;
+            line-height: 30px;
+            text-align: center;
+        }
+        ul{
+            width: 300px;
+            border: 1px solid #ccc;
+            float: left;
+            margin: 10px;
+        }
+        li{
+            list-style: none;
+            width: 280px;
+            margin: 10px;
+        }
+    </style>
+    <script>
+        function rnd(n,m){
+            return parseInt(Math.random()*(m-n)+n);
+        }
+        function createLi(){
+            var oLi = document.createElement('li');
+            oLi.style.height = rnd(100,501)+'px';
+            oLi.style.background='rgb('+rnd(0,256)+','+rnd(0,256)+','+rnd(0,256)+')';
+            return oLi;
+        }
+        window.onload = function () {
+            var aUl = document.getElementsByTagName('ul');
+            function pbl(){
+                for(var i=0;i<20;i++) {
+                    //创建li
+                    var oLi = createLi();
+                    var arr = [];
+                    for(var j =0;j<aUl.length;j++){
+                        arr.push(aUl[j]);
+                    }
+                    //按照高度从小到大排序
+                    arr.sort(function(oul1,oul2){
+                        return oul1.offsetHeight-oul2.offsetHeight;
+                    })
+                    //arr[0]是最小的
+                    arr[0].appendChild(oLi);
+                }
+            }
+            pbl();
+            window.onscroll=function(){
+                var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                var cH = document.documentElement.clientHeight;
+                var bH = document.body.scrollHeight;
+
+                if(scrollTop+cH>=bH-500){
+                    //alert('该加载了');
+                    pbl();
+                }
+            };
+        };
+    </script>
+</head>
+
+<body>
+<a href="../index.html">返回</a>
+    <ul></ul>
+    <ul></ul>
+    <ul></ul>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
